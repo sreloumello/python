@@ -1,10 +1,8 @@
 import subprocess
 
-# Obtendo os perfis de Wi-Fi no macOS usando o comando 'airport'
 command = subprocess.check_output(['/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport', '-s']).decode('utf-8').split('\n')
 networks = [line.split()[0] for line in command[1:] if len(line.split()) > 0]
 
-# Iterando sobre cada rede para obter a senha (se disponível)
 for network in networks:
     try:
         password_output = subprocess.check_output(['/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport', '-I', network]).decode('utf-8')
