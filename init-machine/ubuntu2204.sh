@@ -123,10 +123,10 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 # slack
-SLACK_VER=4.12.2
-wget https://downloads.slack-edge.com/linux_releases/slack-desktop-${SLACK_VER}-amd64.deb
-apt install -y ./slack-desktop-${SLACK_VER}-amd64.deb
-rm -f ./slack-desktop-${SLACK_VER}-amd64.deb
+SLACK_VER=$(curl -sL https://slack.com/intl/en-br/downloads/linux | grep -oP '(?<=version_string":")[^"]+')
+wget "https://downloads.slack-edge.com/linux_releases/slack-desktop-${SLACK_VER}-amd64.deb"
+apt install -y "./slack-desktop-${SLACK_VER}-amd64.deb"
+rm -f "./slack-desktop-${SLACK_VER}-amd64.deb"
 
 # spotify
 curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | apt-key add -
