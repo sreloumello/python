@@ -28,18 +28,25 @@ def get_listener_rules(lb_arn):
 
     return listener_rules
 
+def get_lb_scheme(lb_arn):
+    elbv2_client = boto3.client('elbv2')
+    response = elbv2_client.describe_load_balancers(LoadBalancerArns=[lb_arn])
+    lb_scheme = response['LoadBalancers'][0]['Scheme']
+    return lb_scheme
+
 def main():
     elbv2_client = boto3.client('elbv2')
-
     response = elbv2_client.describe_load_balancers()
 
     wb = Workbook()
     ws = wb.active
-    ws.append(["LOAD BALANCER", "LISTENER", "CONDITIONS"])
+    ws.append(["LOAD BALANCER", "LISTENER", "CONDITIONS", "LB DNS", "EXTERNAL-INTERNAL"])
 
     for lb in response['LoadBalancers']:
         lb_name = lb['LoadBalancerName']
         lb_arn = lb['LoadBalancerArn']
+        lb_dns = lb['DNSName']
+        lb_scheme = get_lb_scheme(lb_arn)
 
         listener_rules = get_listener_rules(lb_arn)
         for listener_port, rules_info in listener_rules.items():
@@ -51,9 +58,9 @@ def main():
                 condition_str = f"Field: {field}, Value: {values}"
                 conditions_list.append(condition_str)
             conditions = "\n".join(conditions_list)
-            ws.append([lb_name, listener_info, conditions])
+            ws.append([lb_name, listener_info, conditions, lb_dns, lb_scheme])
 
-    wb.save("load_balancer_info.xlsx")
+    wb.save("arco-prod-us-east-1.xlsx")
 
 if __name__ == "__main__":
     main()
